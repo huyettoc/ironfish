@@ -38,14 +38,14 @@ export async function selectAsset(
   }
 
   // Get the asset name from the chain DB to populate the display choices
-  for (const { assetId, confirmed } of balances) {
+  for (const { assetId, available } of balances) {
     const assetResponse = await client.getAsset({ id: assetId })
 
     if (assetResponse.content.name) {
       const displayName = BufferUtils.toHuman(Buffer.from(assetResponse.content.name, 'hex'))
       assetOptions.push({
         value: assetId,
-        name: `${assetId} (${displayName}) (${CurrencyUtils.renderIron(confirmed)})`,
+        name: `${assetId} (${displayName}) (${CurrencyUtils.renderIron(available)})`,
       })
     }
   }
