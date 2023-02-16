@@ -542,6 +542,26 @@ describe('Accounts', () => {
         'Account already exists with provided spending key',
       )
     })
+
+    it('should be able to import an account from solely its view keys', async () => {
+      const { node } = nodeTest
+      const account = await useAccountFixture(node.wallet, 'accountA')
+      expect(node.wallet.accountExists(account.name)).toEqual(true)
+      const viewonlyImportRequest = {
+        name: account.name + ' viewonly',
+        viewKey: account.viewKey,
+        incomingViewKey: account.incomingViewKey,
+        outgoingViewKey: account.outgoingViewKey,
+        version: 1,
+      }
+      const viewonlyAccount = await node.wallet.importAccount(viewonlyImportRequest)
+      expect(viewonlyAccount.name).toEqual(viewonlyImportRequest.name)
+      expect(viewonlyAccount.viewKey).toEqual(account.viewKey)
+      expect(viewonlyAccount.incomingViewKey).toEqual(account.incomingViewKey)
+      expect(viewonlyAccount.outgoingViewKey).toEqual(account.outgoingViewKey)
+      expect(viewonlyAccount.spendingKey).toBeNull()
+      expect(viewonlyAccount.publicAddress).toEqual(account.publicAddress)
+    })
   })
 
   describe('expireTransactions', () => {

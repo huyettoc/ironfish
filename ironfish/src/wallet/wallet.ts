@@ -5,6 +5,7 @@ import {
   Asset,
   generateKey,
   generateKeyFromPrivateKey,
+  incomingViewKeyToPublicAddress,
   Note as NativeNote,
 } from '@ironfish/rust-nodejs'
 import { BufferMap } from 'buffer-map'
@@ -1308,21 +1309,34 @@ export class Wallet {
       throw new Error(`Account already exists with the name ${toImport.name}`)
     }
 
-    if (this.listAccounts().find((a) => toImport.spendingKey === a.spendingKey)) {
+    if (
+      'spendingKey' in toImport &&
+      this.listAccounts().find((a) => toImport.spendingKey === a.spendingKey)
+    ) {
       throw new Error(`Account already exists with provided spending key`)
     }
-    // TODO(evan): upon adding multiple account import types, handle this error
-    Assert.isNotNull(toImport.spendingKey, 'Spending key is required for importing account')
-    const key = generateKeyFromPrivateKey(toImport.spendingKey)
-
-    const accountValue: AccountValue = {
-      ...toImport,
-      version: ACCOUNT_SCHEMA_VERSION,
-      id: uuid(),
-      viewKey: key.view_key,
-      incomingViewKey: key.incoming_view_key,
-      outgoingViewKey: key.outgoing_view_key,
-      publicAddress: key.public_address,
+    let accountValue: AccountValue = {} as AccountValue
+    if ('spendingKey' in toImport) {
+      // if spending key is provided, derive everything from that, even if view keys were also provided.
+      const key = generateKeyFromPrivateKey(toImport.spendingKey)
+      accountValue = {
+        ...toImport,
+        version: ACCOUNT_SCHEMA_VERSION,
+        id: uuid(),
+        viewKey: key.view_key,
+        incomingViewKey: key.incoming_view_key,
+        outgoingViewKey: key.outgoing_view_key,
+        publicAddress: key.public_address,
+      }
+    } else {
+      // if spending key is not provided, use the provided view keys
+      const publicAddress: string = incomingViewKeyToPublicAddress(toImport.incomingViewKey)
+      accountValue = {
+        ...toImport,
+        id: uuid(),
+        spendingKey: null,
+        publicAddress: publicAddress,
+      }
     }
 
     validateAccount(accountValue)
