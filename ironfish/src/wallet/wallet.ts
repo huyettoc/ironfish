@@ -1320,13 +1320,9 @@ export class Wallet {
       // if spending key is provided, derive everything from that, even if view keys were also provided.
       const key = generateKeyFromPrivateKey(toImport.spendingKey)
       accountValue = {
-        ...toImport,
+        ...key,
         version: ACCOUNT_SCHEMA_VERSION,
         id: uuid(),
-        viewKey: key.view_key,
-        incomingViewKey: key.incoming_view_key,
-        outgoingViewKey: key.outgoing_view_key,
-        publicAddress: key.public_address,
       }
     } else {
       // if spending key is not provided, use the provided view keys
