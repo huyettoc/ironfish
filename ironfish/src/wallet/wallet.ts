@@ -5,7 +5,6 @@ import {
   Asset,
   generateKey,
   generateKeyFromPrivateKey,
-  incomingViewKeyToPublicAddress,
   Note as NativeNote,
 } from '@ironfish/rust-nodejs'
 import { BufferMap } from 'buffer-map'
@@ -1321,17 +1320,18 @@ export class Wallet {
       const key = generateKeyFromPrivateKey(toImport.spendingKey)
       accountValue = {
         ...toImport,
-        version: ACCOUNT_SCHEMA_VERSION,
-        id: uuid(),
-        viewKey: key.view_key,
         incomingViewKey: key.incoming_view_key,
         outgoingViewKey: key.outgoing_view_key,
         publicAddress: key.public_address,
+        viewKey: key.view_key,
+        version: ACCOUNT_SCHEMA_VERSION,
+        id: uuid(),
       }
     } else {
       // if spending key is not provided, use the provided view keys
       accountValue = {
         ...toImport,
+        version: ACCOUNT_SCHEMA_VERSION,
         id: uuid(),
         spendingKey: null,
       }
