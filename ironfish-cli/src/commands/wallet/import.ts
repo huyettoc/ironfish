@@ -62,18 +62,29 @@ export class ImportCommand extends IronfishCommand {
       account.version = ACCOUNT_SCHEMA_VERSION as number
     }
 
-    const result = await client.importSpendAccount({
-      account,
-      rescan: flags.rescan,
-    })
+    if ('spendingKey' in account) {
+      const result = await client.importSpendAccount({ account: account, rescan: flags.rescan })
+      const { name, isDefaultAccount } = result.content
+      this.log(`Account ${name} imported.`)
 
-    const { name, isDefaultAccount } = result.content
-    this.log(`Account ${name} imported.`)
-
-    if (isDefaultAccount) {
-      this.log(`The default account is now: ${name}`)
+      if (isDefaultAccount) {
+        this.log(`The default account is now: ${name}`)
+      } else {
+        this.log(`Run "ironfish wallet:use ${name}" to set the account as default`)
+      }
     } else {
-      this.log(`Run "ironfish wallet:use ${name}" to set the account as default`)
+      const result = await client.importViewAccount({
+        account,
+        rescan: flags.rescan,
+      })
+      const { name, isDefaultAccount } = result.content
+      this.log(`Account ${name} imported.`)
+
+      if (isDefaultAccount) {
+        this.log(`The default account is now: ${name}`)
+      } else {
+        this.log(`Run "ironfish wallet:use ${name}" to set the account as default`)
+      }
     }
   }
 
