@@ -1314,6 +1314,13 @@ export class Wallet {
     ) {
       throw new Error(`Account already exists with provided spending key`)
     }
+    if (
+      'viewKey' in toImport &&
+      this.listAccounts().find((a) => toImport.viewKey === a.viewKey)
+    ) {
+      throw new Error(`Account already exists with provided view key`)
+    }
+
     let accountValue: AccountValue = {} as AccountValue
     if ('spendingKey' in toImport) {
       // if spending key is provided, derive everything from that, even if view keys were also provided.
