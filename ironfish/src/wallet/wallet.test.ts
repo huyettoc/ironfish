@@ -547,19 +547,20 @@ describe('Accounts', () => {
       const { node } = nodeTest
       const key = generateKey()
       const viewonlyImportRequest = {
-        name: account.name + ' viewonly',
-        viewKey: account.viewKey,
-        incomingViewKey: account.incomingViewKey,
-        outgoingViewKey: account.outgoingViewKey,
+        name: 'viewonly',
+        viewKey: key.view_key,
+        incomingViewKey: key.incoming_view_key,
+        outgoingViewKey: key.outgoing_view_key,
+        publicAddress: key.public_address,
         version: 1,
       }
       const viewonlyAccount = await node.wallet.importAccount(viewonlyImportRequest)
       expect(viewonlyAccount.name).toEqual(viewonlyImportRequest.name)
-      expect(viewonlyAccount.viewKey).toEqual(account.viewKey)
-      expect(viewonlyAccount.incomingViewKey).toEqual(account.incomingViewKey)
-      expect(viewonlyAccount.outgoingViewKey).toEqual(account.outgoingViewKey)
+      expect(viewonlyAccount.viewKey).toEqual(key.view_key)
+      expect(viewonlyAccount.incomingViewKey).toEqual(key.incoming_view_key)
+      expect(viewonlyAccount.outgoingViewKey).toEqual(key.outgoing_view_key)
       expect(viewonlyAccount.spendingKey).toBeNull()
-      expect(viewonlyAccount.publicAddress).toEqual(account.publicAddress)
+      expect(viewonlyAccount.publicAddress).toEqual(key.public_address)
     })
   })
 
