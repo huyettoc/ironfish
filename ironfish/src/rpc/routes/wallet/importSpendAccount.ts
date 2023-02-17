@@ -5,31 +5,30 @@ import * as yup from 'yup'
 import { AccountImport } from '../../../wallet/account'
 import { ApiNamespace, router } from '../router'
 
-export type ImportSpendingAccountRequest = {
+export type ImportSpendAccountRequest = {
   account: AccountImport
   rescan?: boolean
 }
 
-export type ImportSpendingAccountResponse = {
+export type ImportSpendAccountResponse = {
   name: string
   isDefaultAccount: boolean
 }
 
-export const ImportSpendingAccountRequestSchema: yup.ObjectSchema<ImportSpendingAccountRequest> =
-  yup
-    .object({
-      rescan: yup.boolean().optional().default(true),
-      account: yup
-        .object({
-          name: yup.string().defined(),
-          spendingKey: yup.string().defined(),
-          version: yup.number().defined(),
-        })
-        .defined(),
-    })
-    .defined()
+export const ImportSpendAccountRequestSchema: yup.ObjectSchema<ImportSpendAccountRequest> = yup
+  .object({
+    rescan: yup.boolean().optional().default(true),
+    account: yup
+      .object({
+        name: yup.string().defined(),
+        spendingKey: yup.string().defined(),
+        version: yup.number().defined(),
+      })
+      .defined(),
+  })
+  .defined()
 
-export const ImportSpendingAccountResponseSchema: yup.ObjectSchema<ImportSpendingAccountResponse> =
+export const ImportSpendAccountResponseSchema: yup.ObjectSchema<ImportSpendAccountResponse> =
   yup
     .object({
       name: yup.string().defined(),
@@ -37,9 +36,9 @@ export const ImportSpendingAccountResponseSchema: yup.ObjectSchema<ImportSpendin
     })
     .defined()
 
-router.register<typeof ImportSpendingAccountRequestSchema, ImportSpendingAccountResponse>(
-  `${ApiNamespace.wallet}/importAccount`,
-  ImportSpendingAccountRequestSchema,
+router.register<typeof ImportSpendAccountRequestSchema, ImportSpendAccountResponse>(
+  `${ApiNamespace.wallet}/importSpendAccount`,
+  ImportSpendAccountRequestSchema,
   async (request, node): Promise<void> => {
     const account = await node.wallet.importAccount(request.data.account)
 
