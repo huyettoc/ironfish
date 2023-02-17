@@ -4616,5 +4616,18 @@
         }
       ]
     }
+  ],
+  "Accounts importAccount should be able to import the account evan can not import": [
+    {
+      "version": 1,
+      "id": "4fe7b9d8-8ed5-4908-aa1c-29dda1ae89e4",
+      "name": "accountA",
+      "spendingKey": "e44842aed312c7be7af06183c1acec4830afdab9c8c19d783dabcb9ec8b2d7cf",
+      "viewKey": "12fcceca4d4ec34b2883ff786a06038b2d385f4d6ba049e05ad72cf7a27a2ee6dd9a02df51114fafc880848ef481115c7ae6b81071e0ac3c943d40a31abb055c",
+      "incomingViewKey": "d26a537dbfeb7640878c7b8a2c667149165bf78735f38aa9108d098649bf1a00",
+      "outgoingViewKey": "db2ed9322927cc3cc6f04bbd0fbeb62e488340e3b8ac24d5a285e49ec3e7b6c3",
+      "publicAddress": "b3f90166929b05f779d8af9f5bc6d795b63f4c806f691fc3142b23dc372d6dd7",
+      "default": false
+    }
   ]
 }

@@ -1379,7 +1379,7 @@ export class Wallet {
     if (toImport.name && this.getAccountByName(toImport.name)) {
       throw new Error(`Account already exists with the name ${toImport.name}`)
     }
-    if ('spendingKey' in toImport) {
+    if ('spendingKey' in toImport && toImport.spendingKey) {
       return this.importSpendingAccount(toImport)
     }
     return this.importViewOnlyAccount(toImport)
