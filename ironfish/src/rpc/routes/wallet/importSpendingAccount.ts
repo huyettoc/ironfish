@@ -5,17 +5,17 @@ import * as yup from 'yup'
 import { AccountImport } from '../../../wallet/account'
 import { ApiNamespace, router } from '../router'
 
-export type ImportAccountRequest = {
+export type ImportSpendingAccountRequest = {
   account: AccountImport
   rescan?: boolean
 }
 
-export type ImportAccountResponse = {
+export type ImportSpendingAccountResponse = {
   name: string
   isDefaultAccount: boolean
 }
 
-export const ImportAccountRequestSchema: yup.ObjectSchema<ImportAccountRequest> = yup
+export const ImportAccountRequestSchema: yup.ObjectSchema<ImportSpendingAccountRequest> = yup
   .object({
     rescan: yup.boolean().optional().default(true),
     account: yup
@@ -28,14 +28,14 @@ export const ImportAccountRequestSchema: yup.ObjectSchema<ImportAccountRequest> 
   })
   .defined()
 
-export const ImportAccountResponseSchema: yup.ObjectSchema<ImportAccountResponse> = yup
+export const ImportAccountResponseSchema: yup.ObjectSchema<ImportSpendingAccountResponse> = yup
   .object({
     name: yup.string().defined(),
     isDefaultAccount: yup.boolean().defined(),
   })
   .defined()
 
-router.register<typeof ImportAccountRequestSchema, ImportAccountResponse>(
+router.register<typeof ImportAccountRequestSchema, ImportSpendingAccountResponse>(
   `${ApiNamespace.wallet}/importAccount`,
   ImportAccountRequestSchema,
   async (request, node): Promise<void> => {
