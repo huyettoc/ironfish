@@ -24,7 +24,7 @@ export const ACCOUNT_KEY_LENGTH = 32
 
 export const ACCOUNT_SCHEMA_VERSION = 1
 
-export type AccountImport = { name: string; spendingKey: string; version: number }
+export type AccountImport = { name: string; spendingKey: string | null; version: number }
 
 export class Account {
   private readonly walletDb: WalletDB
@@ -32,7 +32,7 @@ export class Account {
   readonly id: string
   readonly displayName: string
   name: string
-  readonly spendingKey: string
+  readonly spendingKey: string | null
   readonly viewKey: string
   readonly incomingViewKey: string
   readonly outgoingViewKey: string
@@ -44,24 +44,14 @@ export class Account {
   constructor({
     id,
     name,
+    publicAddress,
+    walletDb,
     spendingKey,
     viewKey,
     incomingViewKey,
     outgoingViewKey,
-    publicAddress,
-    walletDb,
     version,
-  }: {
-    id: string
-    name: string
-    spendingKey: string
-    viewKey: string
-    incomingViewKey: string
-    outgoingViewKey: string
-    publicAddress: string
-    walletDb: WalletDB
-    version: number | undefined
-  }) {
+  }: AccountValue & { walletDb: WalletDB }) {
     this.id = id
     this.name = name
     this.spendingKey = spendingKey
