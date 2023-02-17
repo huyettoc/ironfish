@@ -79,7 +79,8 @@ export class Wallet {
   scan: ScanState | null = null
   updateHeadState: ScanState | null = null
 
-  protected readonly accounts = new Map<string, Account>()
+  //TODO(joe): make this protected again
+  readonly accounts = new Map<string, Account>()
   readonly walletDb: WalletDB
   readonly logger: Logger
   readonly workerPool: WorkerPool
