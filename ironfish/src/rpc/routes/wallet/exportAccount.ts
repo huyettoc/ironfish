@@ -30,7 +30,7 @@ export const ExportAccountResponseSchema: yup.ObjectSchema<ExportAccountResponse
     account: yup
       .object({
         name: yup.string().defined(),
-        spendingKey: yup.string().defined(),
+        spendingKey: yup.string().defined().nullable(),
         viewKey: yup.string().defined(),
         incomingViewKey: yup.string().defined(),
         outgoingViewKey: yup.string().defined(),
