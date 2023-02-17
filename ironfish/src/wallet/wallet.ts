@@ -1316,7 +1316,7 @@ export class Wallet {
       throw new Error(`Account already exists with provided spending key`)
     }
     let accountValue: AccountValue = {} as AccountValue
-    if ('spendingKey' in toImport) {
+    if ('spendingKey' in toImport && toImport.spendingKey) {
       // if spending key is provided, derive everything from that, even if view keys were also provided.
       const key = generateKeyFromPrivateKey(toImport.spendingKey)
       accountValue = {
@@ -1328,7 +1328,7 @@ export class Wallet {
         outgoingViewKey: key.outgoing_view_key,
         publicAddress: key.public_address,
       }
-    } else {
+    } else if ('viewKey' in toImport) {
       // if spending key is not provided, use the provided view keys
       const publicAddress: string = incomingViewKeyToPublicAddress(toImport.incomingViewKey)
       accountValue = {
