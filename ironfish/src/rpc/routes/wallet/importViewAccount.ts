@@ -38,7 +38,7 @@ export const ImportViewAccountResponseSchema: yup.ObjectSchema<ImportViewAccount
   .defined()
 
 router.register<typeof ImportViewAccountRequestSchema, ImportViewAccountResponse>(
-  `${ApiNamespace.wallet}/importAccount`,
+  `${ApiNamespace.wallet}/importViewAccount`,
   ImportViewAccountRequestSchema,
   async (request, node): Promise<void> => {
     const account = await node.wallet.importAccount(request.data.account)
