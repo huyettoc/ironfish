@@ -1333,9 +1333,8 @@ export class Wallet {
       const publicAddress: string = incomingViewKeyToPublicAddress(toImport.incomingViewKey)
       accountValue = {
         ...toImport,
+        version: ACCOUNT_SCHEMA_VERSION,
         id: uuid(),
-        spendingKey: null,
-        publicAddress: publicAddress,
       }
     }
 
