@@ -545,8 +545,7 @@ describe('Accounts', () => {
 
     it('should be able to import an account from solely its view keys', async () => {
       const { node } = nodeTest
-      const account = await useAccountFixture(node.wallet, 'accountA')
-      expect(node.wallet.accountExists(account.name)).toEqual(true)
+      const key = generateKey()
       const viewonlyImportRequest = {
         name: account.name + ' viewonly',
         viewKey: account.viewKey,
