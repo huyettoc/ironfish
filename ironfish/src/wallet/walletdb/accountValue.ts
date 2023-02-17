@@ -38,7 +38,6 @@ export class AccountValueEncoding implements IDatabaseEncoding<AccountValue> {
     bw.writeBytes(Buffer.from(value.incomingViewKey, 'hex'))
     bw.writeBytes(Buffer.from(value.outgoingViewKey, 'hex'))
     bw.writeBytes(Buffer.from(value.publicAddress, 'hex'))
-
     return bw.render()
   }
 
