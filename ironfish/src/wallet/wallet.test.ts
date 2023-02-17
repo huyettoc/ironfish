@@ -562,6 +562,25 @@ describe('Accounts', () => {
       expect(viewonlyAccount.spendingKey).toBeNull()
       expect(viewonlyAccount.publicAddress).toEqual(key.public_address)
     })
+    it('should be unable to import a viewonly account if it is a dupe', async () => {
+      const { node } = nodeTest
+      const key = generateKey()
+      const viewonlyImportRequest = {
+        name: 'viewonly',
+        viewKey: key.view_key,
+        incomingViewKey: key.incoming_view_key,
+        outgoingViewKey: key.outgoing_view_key,
+        publicAddress: key.public_address,
+        version: 1,
+      }
+      await node.wallet.importAccount(viewonlyImportRequest)
+      const clone = { ...viewonlyImportRequest }
+      clone.name = 'Different name'
+
+      await expect(node.wallet.importAccount(clone)).rejects.toThrow(
+        'Account already exists with provided view key(s)',
+      )
+    })
   })
 
   describe('expireTransactions', () => {
