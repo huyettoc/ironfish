@@ -29,6 +29,7 @@ type SpendingAccountImport = { name: string; spendingKey: string; version: numbe
 type ViewAccountImport = {
   name: string
   viewKey: string
+  publicAddress: string
   incomingViewKey: string
   outgoingViewKey: string
   version: number
