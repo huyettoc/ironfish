@@ -1303,52 +1303,25 @@ export class Wallet {
     }
   }
 
-  async importAccount(toImport: AccountImport): Promise<Account> {
-    if (toImport.name && this.getAccountByName(toImport.name)) {
-      throw new Error(`Account already exists with the name ${toImport.name}`)
+  async importSpendingAccount(toImport: AccountImport): Promise<Account> {
+    // we already know we are working with a SpendingAccountImport
+    // but double check to satisfy the type checker
+    if (!('spendingKey' in toImport)) {
+      throw new Error(`Invalid account import`)
     }
-
-    // disallow dupe keys of any kind
-    if (
-      'spendingKey' in toImport &&
-      this.listAccounts().find((a) => toImport.spendingKey === a.spendingKey)
-    ) {
+    if (this.listAccounts().find((a) => toImport.spendingKey === a.spendingKey)) {
       throw new Error(`Account already exists with provided spending key`)
     }
-    if (
-      ('viewKey' in toImport &&
-        this.listAccounts().find((a) => toImport.viewKey === a.viewKey)) ||
-      ('incomingViewKey' in toImport &&
-        this.listAccounts().find((a) => toImport.incomingViewKey === a.incomingViewKey)) ||
-      ('outgoingViewKey' in toImport &&
-        this.listAccounts().find((a) => toImport.outgoingViewKey === a.outgoingViewKey))
-    ) {
-      throw new Error(`Account already exists with provided view key(s)`)
+    const key = generateKeyFromPrivateKey(toImport.spendingKey)
+    const accountValue: AccountValue = {
+      ...toImport,
+      incomingViewKey: key.incoming_view_key,
+      outgoingViewKey: key.outgoing_view_key,
+      publicAddress: key.public_address,
+      viewKey: key.view_key,
+      version: ACCOUNT_SCHEMA_VERSION,
+      id: uuid(),
     }
-
-    let accountValue: AccountValue = {} as AccountValue
-    if ('spendingKey' in toImport) {
-      // if spending key is provided, derive everything from that, even if view keys were also provided.
-      const key = generateKeyFromPrivateKey(toImport.spendingKey)
-      accountValue = {
-        ...toImport,
-        incomingViewKey: key.incoming_view_key,
-        outgoingViewKey: key.outgoing_view_key,
-        publicAddress: key.public_address,
-        viewKey: key.view_key,
-        version: ACCOUNT_SCHEMA_VERSION,
-        id: uuid(),
-      }
-    } else {
-      // if spending key is not provided, use the provided view keys
-      accountValue = {
-        ...toImport,
-        version: ACCOUNT_SCHEMA_VERSION,
-        id: uuid(),
-        spendingKey: null,
-      }
-    }
-
     validateAccount(accountValue)
 
     const account = new Account({
@@ -1365,6 +1338,51 @@ export class Wallet {
     this.onAccountImported.emit(account)
 
     return account
+  }
+
+  async importViewOnlyAccount(toImport: AccountImport): Promise<Account> {
+    if (!('viewKey' in toImport)) {
+      throw new Error(`Invalid account import`)
+    }
+    if (
+      this.listAccounts().find((a) => toImport.viewKey === a.viewKey) ||
+      this.listAccounts().find((a) => toImport.incomingViewKey === a.incomingViewKey) ||
+      this.listAccounts().find((a) => toImport.outgoingViewKey === a.outgoingViewKey)
+    ) {
+      throw new Error(`Account already exists with provided view key(s)`)
+    }
+    const accountValue: AccountValue = {
+      ...toImport,
+      version: ACCOUNT_SCHEMA_VERSION,
+      id: uuid(),
+      spendingKey: null,
+    }
+    validateAccount(accountValue)
+
+    const account = new Account({
+      ...accountValue,
+      walletDb: this.walletDb,
+    })
+
+    await this.walletDb.db.transaction(async (tx) => {
+      await this.walletDb.setAccount(account, tx)
+      await account.updateHead(null, tx)
+    })
+
+    this.accounts.set(account.id, account)
+    this.onAccountImported.emit(account)
+
+    return account
+  }
+
+  async importAccount(toImport: AccountImport): Promise<Account> {
+    if (toImport.name && this.getAccountByName(toImport.name)) {
+      throw new Error(`Account already exists with the name ${toImport.name}`)
+    }
+    if ('spendingKey' in toImport) {
+      return this.importSpendingAccount(toImport)
+    }
+    return this.importViewOnlyAccount(toImport)
   }
 
   listAccounts(): Account[] {
