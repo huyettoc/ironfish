@@ -24,15 +24,17 @@ export const ACCOUNT_KEY_LENGTH = 32
 
 export const ACCOUNT_SCHEMA_VERSION = 1
 
-export type AccountImport =
-  | { name: string; spendingKey: string; version: number }
-  | {
-      name: string
-      viewKey: string
-      incomingViewKey: string
-      outgoingViewKey: string
-      version: number
-    }
+type SpendingAccountImport = { name: string; spendingKey: string; version: number }
+
+type ViewAccountImport = {
+  name: string
+  viewKey: string
+  incomingViewKey: string
+  outgoingViewKey: string
+  version: number
+}
+
+export type AccountImport = SpendingAccountImport | ViewAccountImport
 
 export class Account {
   private readonly walletDb: WalletDB
