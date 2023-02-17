@@ -62,7 +62,7 @@ export class ImportCommand extends IronfishCommand {
       account.version = ACCOUNT_SCHEMA_VERSION as number
     }
 
-    const result = await client.importAccount({
+    const result = await client.importSpendAccount({
       account,
       rescan: flags.rescan,
     })

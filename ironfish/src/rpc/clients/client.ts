@@ -48,6 +48,8 @@ import {
   GetTransactionStreamResponse,
   GetWorkersStatusRequest,
   GetWorkersStatusResponse,
+  ImportViewAccountRequest,
+  ImportViewAccountResponse,
   PostTransactionRequest,
   PostTransactionResponse,
   SendTransactionRequest,
@@ -95,7 +97,10 @@ import { ExportAccountRequest, ExportAccountResponse } from '../routes/wallet/ex
 import { GetAssetsRequest, GetAssetsResponse } from '../routes/wallet/getAssets'
 import { GetBalancesRequest, GetBalancesResponse } from '../routes/wallet/getBalances'
 import { GetAccountStatusRequest, GetAccountStatusResponse } from '../routes/wallet/getStatus'
-import { ImportSpendAccountRequest, ImportSpendAccountResponse } from '../routes/wallet/importSpendAccount'
+import {
+  ImportSpendAccountRequest,
+  ImportSpendAccountResponse,
+} from '../routes/wallet/importSpendAccount'
 import { MintAssetRequest, MintAssetResponse } from '../routes/wallet/mintAsset'
 import { RemoveAccountRequest, RemoveAccountResponse } from '../routes/wallet/removeAccount'
 import { RescanAccountRequest, RescanAccountResponse } from '../routes/wallet/rescanAccount'
@@ -215,11 +220,20 @@ export abstract class RpcClient {
     ).waitForEnd()
   }
 
-  async importAccount(
+  async importSpendAccount(
     params: ImportSpendAccountRequest,
   ): Promise<RpcResponseEnded<ImportSpendAccountResponse>> {
     return this.request<ImportSpendAccountResponse>(
-      `${ApiNamespace.wallet}/importAccount`,
+      `${ApiNamespace.wallet}/importSpendAccount`,
+      params,
+    ).waitForEnd()
+  }
+
+  async importViewAccount(
+    params: ImportViewAccountRequest,
+  ): Promise<RpcResponseEnded<ImportViewAccountResponse>> {
+    return this.request<ImportViewAccountResponse>(
+      `${ApiNamespace.wallet}/importViewAccount`,
       params,
     ).waitForEnd()
   }
