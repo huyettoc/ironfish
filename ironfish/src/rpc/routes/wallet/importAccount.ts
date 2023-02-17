@@ -2,18 +2,11 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 import * as yup from 'yup'
+import { AccountImport } from '../../../wallet/account'
 import { ApiNamespace, router } from '../router'
 
 export type ImportAccountRequest = {
-  account: {
-    name: string
-    spendingKey: string | null
-    viewKey: string
-    incomingViewKey: string
-    outgoingViewKey: string
-    publicAddress: string
-    version: number
-  }
+  account: AccountImport
   rescan?: boolean
 }
 
@@ -28,11 +21,7 @@ export const ImportAccountRequestSchema: yup.ObjectSchema<ImportAccountRequest> 
     account: yup
       .object({
         name: yup.string().defined(),
-        spendingKey: yup.string().defined().nullable(),
-        viewKey: yup.string().defined(),
-        incomingViewKey: yup.string().defined(),
-        outgoingViewKey: yup.string().defined(),
-        publicAddress: yup.string().defined(),
+        spendingKey: yup.string().defined(),
         version: yup.number().defined(),
       })
       .defined(),
