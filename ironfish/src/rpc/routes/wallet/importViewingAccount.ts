@@ -5,31 +5,33 @@ import * as yup from 'yup'
 import { AccountImport } from '../../../wallet/account'
 import { ApiNamespace, router } from '../router'
 
-export type ImportSpendingAccountRequest = {
+export type ImportViewingAccountRequest = {
   account: AccountImport
   rescan?: boolean
 }
 
-export type ImportSpendingAccountResponse = {
+export type ImportViewingAccountResponse = {
   name: string
   isDefaultAccount: boolean
 }
 
-export const ImportSpendingAccountRequestSchema: yup.ObjectSchema<ImportSpendingAccountRequest> =
+export const ImportViewingAccountRequestSchema: yup.ObjectSchema<ImportViewingAccountRequest> =
   yup
     .object({
       rescan: yup.boolean().optional().default(true),
       account: yup
         .object({
           name: yup.string().defined(),
-          spendingKey: yup.string().defined(),
+          viewingKey: yup.string().defined(),
+          incomingViewingKey: yup.string().defined(),
+          outgoingViewingKey: yup.string().defined(),
           version: yup.number().defined(),
         })
         .defined(),
     })
     .defined()
 
-export const ImportSpendingAccountResponseSchema: yup.ObjectSchema<ImportSpendingAccountResponse> =
+export const ImportViewingAccountResponseSchema: yup.ObjectSchema<ImportViewingAccountResponse> =
   yup
     .object({
       name: yup.string().defined(),
@@ -37,9 +39,9 @@ export const ImportSpendingAccountResponseSchema: yup.ObjectSchema<ImportSpendin
     })
     .defined()
 
-router.register<typeof ImportSpendingAccountRequestSchema, ImportSpendingAccountResponse>(
+router.register<typeof ImportViewingAccountRequestSchema, ImportViewingAccountResponse>(
   `${ApiNamespace.wallet}/importAccount`,
-  ImportSpendingAccountRequestSchema,
+  ImportViewingAccountRequestSchema,
   async (request, node): Promise<void> => {
     const account = await node.wallet.importAccount(request.data.account)
 
