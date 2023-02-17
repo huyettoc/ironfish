@@ -1330,12 +1330,10 @@ export class Wallet {
       }
     } else {
       // if spending key is not provided, use the provided view keys
-      const publicAddress: string = incomingViewKeyToPublicAddress(toImport.incomingViewKey)
       accountValue = {
         ...toImport,
         id: uuid(),
         spendingKey: null,
-        publicAddress: publicAddress,
       }
     }
 
