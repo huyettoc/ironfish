@@ -1308,6 +1308,7 @@ export class Wallet {
       throw new Error(`Account already exists with the name ${toImport.name}`)
     }
 
+    // disallow dupe keys of any kind
     if (
       'spendingKey' in toImport &&
       this.listAccounts().find((a) => toImport.spendingKey === a.spendingKey)
@@ -1315,10 +1316,14 @@ export class Wallet {
       throw new Error(`Account already exists with provided spending key`)
     }
     if (
-      'viewKey' in toImport &&
-      this.listAccounts().find((a) => toImport.viewKey === a.viewKey)
+      ('viewKey' in toImport &&
+        this.listAccounts().find((a) => toImport.viewKey === a.viewKey)) ||
+      ('incomingViewKey' in toImport &&
+        this.listAccounts().find((a) => toImport.incomingViewKey === a.incomingViewKey)) ||
+      ('outgoingViewKey' in toImport &&
+        this.listAccounts().find((a) => toImport.outgoingViewKey === a.outgoingViewKey))
     ) {
-      throw new Error(`Account already exists with provided view key`)
+      throw new Error(`Account already exists with provided view key(s)`)
     }
 
     let accountValue: AccountValue = {} as AccountValue
