@@ -8,6 +8,7 @@ import {
   Bech32m,
   JSONUtils,
   PromiseUtils,
+  RpcResponseEnded,
 } from '@ironfish/sdk'
 import { CliUx, Flags } from '@oclif/core'
 import { IronfishCommand } from '../../command'
@@ -62,29 +63,25 @@ export class ImportCommand extends IronfishCommand {
       account.version = ACCOUNT_SCHEMA_VERSION as number
     }
 
-    if ('spendingKey' in account) {
-      const result = await client.importSpendAccount({ account: account, rescan: flags.rescan })
-      const { name, isDefaultAccount } = result.content
-      this.log(`Account ${name} imported.`)
-
-      if (isDefaultAccount) {
-        this.log(`The default account is now: ${name}`)
-      } else {
-        this.log(`Run "ironfish wallet:use ${name}" to set the account as default`)
-      }
+    let result: RpcResponseEnded<{ name: string; isDefaultAccount: boolean }>
+    if ('spendingKey' in account && account.spendingKey) {
+      result = await client.importSpendAccount({
+        account: account,
+        rescan: flags.rescan,
+      })
     } else {
-      const result = await client.importViewAccount({
+      result = await client.importViewAccount({
         account,
         rescan: flags.rescan,
       })
-      const { name, isDefaultAccount } = result.content
-      this.log(`Account ${name} imported.`)
+    }
+    const { name, isDefaultAccount } = result.content
+    this.log(`Account ${name} imported.`)
 
-      if (isDefaultAccount) {
-        this.log(`The default account is now: ${name}`)
-      } else {
-        this.log(`Run "ironfish wallet:use ${name}" to set the account as default`)
-      }
+    if (isDefaultAccount) {
+      this.log(`The default account is now: ${name}`)
+    } else {
+      this.log(`Run "ironfish wallet:use ${name}" to set the account as default`)
     }
   }
 
